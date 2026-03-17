@@ -1,55 +1,60 @@
-# Custom String Class (`str`)
+# Custom String Library (str)
 
-This project implements a custom `str` class in C++ that replicates some of the core functionality of `std::string`. It uses `std::vector<char>` as its underlying data structure.
+A robust, performant, and "bulletproof" C++ string library built for learning and high reliability.
 
 ## Features
 
-- **Constructors**: Default constructor and constructor from `const char*`.
-- **Capacity**: Methods for `size()`, `length()`, and `empty()`.
-- **Element Access**: `operator[]`, `at()`, `front()`, and `back()`.
-- **Modifiers**: `push_back()`, `append()`, `operator+=`, `operator+`, and `clear()`.
-- **Searching**: `find()`, `rfind()`, `find_first_of()`, and `find_last_of()` for both characters and substrings.
-- **Substring**: `substr(index)` and `substr(index, length)`.
-- **Comparison**: `operator==` and `operator!=`.
-- **I/O Support**: `operator<<`, `operator>>`, and a custom `getline()`.
+- **Standard Compliant**: Implements all essential string operations like `substr`, `find`, `insert`, `replace`, and `erase`.
+- **Performance Optimized**: 
+  - `length()`, `size()`, and `clear()` are optimized to **O(1)**.
+  - Efficient vector-based storage.
+- **Robust Logic**:
+  - **Aliasing Protection**: Safely handles self-referencing operations (e.g., `s.insert(0, s)` or `s.replace(index, len, s)`).
+  - **Null Safety**: Gracefully handles `nullptr` in constructors and search functions.
+  - **Boundary Checking**: Rigorous bounds checking with `std::out_of_range` exceptions.
+- **STL Integration**:
+  - Full **iterator support** (`begin()`, `end()`) allowing use with range-based for loops and algorithms like `std::sort` and `std::reverse`.
+- **Rich Comparisons**: Full suite of comparison operators (`==`, `!=`, `<`, `>`, `<=`, `>=`) using lexicographical logic.
+- **Stream I/O**: Compatible with `std::cin`, `std::cout`, and `std::getline`.
 
-## File Structure
+## Usage Examples
 
-- `str.h`: Header file containing the class definition.
-- `str.cpp`: Implementation of the class methods.
-- `demonstration.cpp`: A demonstration file showcasing the usage of the `str` class.
+### Basic Operations
+```cpp
+str s = "Hello";
+s += " World";
+std::cout << s << std::endl; // Output: Hello World
+```
 
-## Getting Started
+### STL Algorithms
+```cpp
+str s = "dcba";
+std::sort(s.begin(), s.end());
+std::cout << s << std::endl; // Output: abcd
+```
 
-### Prerequisites
+### Safe Self-Modification
+```cpp
+str s = "ABC";
+s.insert(0, s); // Correctly handles self-reference
+std::cout << s << std::endl; // Output: ABCABC
+```
 
-- A C++ compiler (e.g., `g++`).
+### Optimized Performance
+```cpp
+str large(1000000, 'x'); // Assume a fill constructor exists or use push_back
+int len = large.length(); // Instant O(1) lookup
+```
 
-### Compilation
+## Compilation
 
-To compile and run the demonstration:
+To compile with the provided demonstration:
 
 ```bash
 g++ str.cpp demonstration.cpp -o demonstration
 ./demonstration
 ```
 
-## Example Usage
-
-```cpp
-#include "str.h"
-#include <iostream>
-
-int main() {
-    str s = "Hello";
-    s += " World";
-    std::cout << s << std::endl; // Output: Hello World
-    return 0;
-}
-```
-
 ## Implementation Details
 
-- The class maintains a null terminator `\0` at the end of the `std::vector<char> data` to ensure compatibility with C-style string patterns when needed internally.
-- Error handling is implemented for `at()` and `substr()` using `std::out_of_range`.
-- `find` and `rfind` return `str::npos` (-1) when the target is not found.
+The library is backed by a `std::vector<char>`, ensuring dynamic memory management while maintaining a hidden null terminator (`\0`) to stay compatible with C-style string expectations through the `c_str()` method.

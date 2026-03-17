@@ -49,7 +49,28 @@ class str {
 
         // Modifying, erasing and compairson
         void clear();
-        int compare(str st); // TODO: Implement this function.
+        void erase();
+        void erase(int index, const int len);
+        void swap(str &rhs);
+        void insert(int index, const str &st);
+        void replace(int index, const int len, const str &st);
+        int compare(const str &other) const;
+
+        vector<char>::iterator begin() {
+                return data.begin();
+        }
+        vector<char>::const_iterator begin() const {
+                return data.begin();
+        }
+        vector<char>::iterator end() {
+                return data.end() - 1;
+        }
+        vector<char>::const_iterator end() const {
+                return data.end() - 1;
+        }
+
+        // Returns char* of str
+        const char *c_str() const;
 
         // Friend function for opertor>> and getline()
         friend istream &operator>>(istream &is, str &s);
@@ -58,11 +79,12 @@ class str {
 
 // global functions to perform different operations.
 str operator+(str lhs, const str &rhs);
-bool operator==(const str lhs, const str &rhs);
-bool operator!=(const str lhs, const str &rhs);
-// TODO: Implement two functions below.
-bool operator>(const str lhs, const str rhs);
-bool operator<(const str lhs, const str rhs);
+bool operator==(const str &lhs, const str &rhs);
+bool operator!=(const str &lhs, const str &rhs);
+bool operator>(const str &lhs, const str &rhs);
+bool operator<(const str &lhs, const str &rhs);
+bool operator>=(const str &lhs, const str &rhs);
+bool operator<=(const str &lhs, const str &rhs);
 
 // This tells the compiler: "When you see << and a 'str' object, do this."
 ostream &operator<<(ostream &os, const str &s);

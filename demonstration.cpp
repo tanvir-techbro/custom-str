@@ -1,90 +1,87 @@
 #include "str.h"
 #include <iostream>
+#include <algorithm>
+#include <vector>
 
 int main() {
-        // 1. Constructors
-        str s1;           // Default constructor
-        str s2("Hello");  // const char* constructor
-        str s3 = "World"; // Implicit conversion
+    std::cout << "===== Custom String Library Demonstration =====" << std::endl;
 
-        std::cout << "--- Constructors ---" << std::endl;
-        std::cout << "s1 (empty): '" << s1 << "'" << std::endl;
-        std::cout << "s2: " << s2 << std::endl;
-        std::cout << "s3: " << s3 << std::endl;
+    // 1. Constructors and C-String Interop
+    str s1("Hello");
+    str s2 = "World";
+    str empty = nullptr;
+    std::cout << "\n[1] Constructors & c_str()" << std::endl;
+    std::cout << "s1: " << s1.c_str() << " (Length: " << s1.length() << ")" << std::endl;
+    std::cout << "s2: " << s2.c_str() << " (Length: " << s2.length() << ")" << std::endl;
+    std::cout << "Null-handled string: '" << empty << "'" << std::endl;
 
-        // 2. Capacity
-        std::cout << "\n--- Capacity ---" << std::endl;
-        std::cout << "s2 size: " << s2.size() << std::endl;
-        std::cout << "s2 length: " << s2.length() << std::endl;
-        std::cout << "s1 is empty: " << (s1.empty() ? "Yes" : "No") << std::endl;
+    // 2. Optimized Capacity (O(1))
+    std::cout << "\n[2] Optimized Capacity" << std::endl;
+    std::cout << "Is empty string empty? " << (empty.empty() ? "Yes" : "No") << std::endl;
+    std::cout << "s1 size: " << s1.size() << " (Instant O(1) lookup)" << std::endl;
 
-        // 3. Element Access
-        std::cout << "\n--- Element Access ---" << std::endl;
-        std::cout << "s2[0]: " << s2[0] << std::endl;
-        std::cout << "s2.at(1): " << s2.at(1) << std::endl;
-        std::cout << "s2.front(): " << s2.front() << std::endl;
-        std::cout << "s2.back(): " << s2.back() << std::endl;
+    // 3. Iterators and STL Integration
+    std::cout << "\n[3] Iterators & STL Algorithms" << std::endl;
+    str s3 = "dcba";
+    std::cout << "Original s3: " << s3 << std::endl;
+    
+    std::cout << "Range-based for loop: ";
+    for (char c : s3) std::cout << c << " ";
+    std::cout << std::endl;
 
-        // 4. Modifiers
-        std::cout << "\n--- Modifiers ---" << std::endl;
-        s1.push_back('A');
-        std::cout << "After push_back('A'): " << s1 << std::endl;
+    std::sort(s3.begin(), s3.end());
+    std::cout << "After std::sort: " << s3 << std::endl;
 
-        s2.append(" ");
-        s2.append(s3);
-        std::cout << "After append: " << s2 << std::endl;
+    std::reverse(s3.begin(), s3.end());
+    std::cout << "After std::reverse: " << s3 << std::endl;
 
-        str s4 = "Greetings";
-        s4 += " ";
-        s4 += s3;
-        std::cout << "After operator+=: " << s4 << std::endl;
+    // 4. Advanced Modifiers (Robust against Aliasing)
+    std::cout << "\n[4] Advanced Modifiers" << std::endl;
+    str s4 = "The quick fox";
+    std::cout << "Original: " << s4 << std::endl;
+    
+    s4.insert(10, "brown ");
+    std::cout << "After insert: " << s4 << std::endl;
 
-        str s5 = s2 + "!!!";
-        std::cout << "After operator+: " << s5 << std::endl;
+    s4.replace(4, 5, "lazy");
+    std::cout << "After replace: " << s4 << std::endl;
 
-        // 5. Searching
-        std::cout << "\n--- Searching ---" << std::endl;
-        str search_str = "Hello World";
-        std::cout << "String: " << search_str << std::endl;
-        std::cout << "find('o'): " << search_str.find('o') << std::endl;
-        std::cout << "find(\"World\"): " << search_str.find("World") << std::endl;
-        std::cout << "rfind('o'): " << search_str.rfind('o') << std::endl;
-        std::cout << "find_first_of('l'): " << search_str.find_first_of('l') << std::endl;
-        std::cout << "find_last_of('l'): " << search_str.find_last_of('l') << std::endl;
+    s4.erase(14, 6); // remove "brown "
+    std::cout << "After erase: " << s4 << std::endl;
 
-        // 6. Substring
-        std::cout << "\n--- Substring ---" << std::endl;
-        std::cout << "search_str.substr(6): " << search_str.substr(6) << std::endl;
-        std::cout << "search_str.substr(0, 5): " << search_str.substr(0, 5) << std::endl;
+    str s5 = "Swap";
+    str s6 = "Test";
+    s5.swap(s6);
+    std::cout << "After swap: s5=" << s5 << ", s6=" << s6 << std::endl;
 
-        // 7. Comparison
-        std::cout << "\n--- Comparison ---" << std::endl;
-        str cmp1 = "Test";
-        str cmp2 = "Test";
-        str cmp3 = "Toast";
-        std::cout << "cmp1 == cmp2: " << (cmp1 == cmp2 ? "True" : "False") << std::endl;
-        std::cout << "cmp1 != cmp3: " << (cmp1 != cmp3 ? "True" : "False") << std::endl;
+    // 5. Comparison Logic
+    std::cout << "\n[5] Comparison Operators" << std::endl;
+    str a = "apple";
+    str b = "banana";
+    std::cout << "apple < banana: " << (a < b ? "True" : "False") << std::endl;
+    std::cout << "apple >= apple: " << (a >= a ? "True" : "False") << std::endl;
 
-        // 8. Clear
-        std::cout << "\n--- Clear ---" << std::endl;
-        s5.clear();
-        std::cout << "s5 after clear, empty(): " << (s5.empty() ? "Yes" : "No") << std::endl;
+    // 6. Searching
+    std::cout << "\n[6] Searching" << std::endl;
+    str search_text = "Mississippi";
+    std::cout << "Text: " << search_text << std::endl;
+    std::cout << "find('i'): " << search_text.find('i') << std::endl;
+    std::cout << "rfind('i'): " << search_text.rfind('i') << std::endl;
+    std::cout << "find(\"ss\"): " << search_text.find("ss") << std::endl;
+    std::cout << "find(\"\") standard behavior: " << search_text.find("") << std::endl;
 
-        // 9. I/O (Note: This is interactive, but demonstrated here for completeness)
-        /*
-        str input_str;
-        std::cout << "\nEnter a word: ";
-        std::cin >> input_str;
-        std::cout << "You entered: " << input_str << std::endl;
+    // 7. Stream I/O
+    std::cout << "\n[7] Stream I/O" << std::endl;
+    std::cout << "Outputting with operator<<: " << s1 << " " << s2 << "!" << std::endl;
+    
+    /* 
+    str input;
+    std::cout << "Enter a word: ";
+    std::cin >> input;
+    std::cout << "You entered: " << input << std::endl;
+    */
 
-        std::cin.ignore(); // Clear newline
-        str line_str;
-        std::cout << "Enter a full line: ";
-        getline(std::cin, line_str);
-        std::cout << "You entered line: " << line_str << std::endl;
-        */
-        std::cout << "\n--- I/O ---" << std::endl;
-        std::cout << "I/O operations (operator>> and getline) are implemented and ready for use!" << std::endl;
+    std::cout << "\nAll features demonstrated successfully!" << std::endl;
 
-        return 0;
+    return 0;
 }

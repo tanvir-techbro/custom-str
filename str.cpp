@@ -1,6 +1,7 @@
 #include "str.h"
 #include <cctype>
 #include <istream>
+#include <stdexcept>
 #include <vector>
 using namespace std;
 
@@ -43,34 +44,12 @@ bool str::empty() const {
 
 // returns the length of the str
 int str::length() const {
-        int length = 0;
-        int i = 0;
-
-        if (data[0] == '\0') {
-                length = 0;
-        } else {
-                while (data[i] != '\0') {
-                        i++;
-                        length++;
-                }
-        }
-        return length;
+        return data.size() - 1;
 }
 
 // Identical to .length() method
 int str::size() const {
-        int size = 0;
-        int i = 0;
-
-        if (data[0] == '\0') {
-                size = 0;
-        } else {
-                while (data[i] != '\0') {
-                        i++;
-                        size++;
-                }
-        }
-        return size;
+        return data.size() - 1;
 }
 
 // Returns the character at given index
@@ -86,7 +65,7 @@ char str::at(int index) const {
 // Returns the first character.
 char str::front() const {
         if (data.size() == 1) {
-                throw std::out_of_range("back() called on an empty string");
+                throw std::out_of_range("front() called on an empty string");
         }
         return data[0];
 }
@@ -159,7 +138,7 @@ int str::find(const char *ch) const {
         }
 
         if (ch_length == 0) {
-                return npos;
+                return 0;
         } else if (ch_length > data.size() - 1) {
                 return npos;
         }
@@ -208,7 +187,7 @@ int str::rfind(const char *ch) const {
         }
 
         if (ch_length == 0) {
-                return npos;
+                return 0;
         } else if (ch_length > data.size() - 1) {
                 return npos;
         }
@@ -295,10 +274,71 @@ str str::substr(int index, const int len) const {
 }
 
 void str::clear() {
-        while (data.size() > 0) {
-                data.pop_back();
-        }
+        data.clear();
         data.push_back('\0');
+}
+
+// Erases a whose str
+void str::erase() {
+        data.clear();
+        data.push_back('\0');
+}
+
+// Erases certain part of str
+void str::erase(int index, const int len) {
+        if (index + len < data.size()) {
+                data.erase(data.begin() + index, data.begin() + index + len);
+        } else {
+                throw std::out_of_range("Index " + std::to_string(index) + " is out of bounds for size " + std::to_string(data.size() - 1));
+        }
+}
+
+// Swaps 2 str
+void str::swap(str &rhs) {
+        this->data.swap(rhs.data);
+}
+
+void str::insert(int index, const str &st) {
+        if (index < 0 || index > data.size() - 1) {
+                throw std::out_of_range("Index " + std::to_string(index) + " is out of bounds for size " + std::to_string(data.size() - 1));
+        }
+
+        if (this == &st) {
+                str temp = st;
+                data.insert(this->data.begin() + index, temp.begin(), temp.end());
+        } else {
+                data.insert(this->data.begin() + index, st.begin(), st.end());
+        }
+}
+
+void str::replace(int index, const int len, const str &st) {
+        str temp = st;
+        this->erase(index, len);
+        this->insert(index, temp);
+}
+
+int str::compare(const str &other) const {
+        int min = (this->length() < other.length()) ? this->length() : other.length();
+
+        for (int i = 0; i <= min; i++) {
+                if (this->data[i] > other.data[i]) {
+                        return 1;
+                } else if (this->data[i] < other.data[i]) {
+                        return -1;
+                }
+        }
+        // If all characte matches the shorter string is smaller.
+        if (this->length() > other.length()) {
+                return 1;
+        } else if (this->length() < other.length()) {
+                return -1;
+        }
+
+        return 0;
+}
+
+const char *str::c_str() const {
+        return data.data();
 }
 
 // -------------------- Global functions --------------------
@@ -310,7 +350,7 @@ str operator+(str lhs, const str &rhs) {
 }
 
 // lets up compair two str
-bool operator==(const str lhs, const str &rhs) {
+bool operator==(const str &lhs, const str &rhs) {
         if (lhs.length() != rhs.length()) {
                 return false;
         }
@@ -324,8 +364,24 @@ bool operator==(const str lhs, const str &rhs) {
 }
 
 // checks if two str is same or not.
-bool operator!=(const str lhs, const str &rhs) {
+bool operator!=(const str &lhs, const str &rhs) {
         return !(lhs == rhs);
+}
+
+bool operator>(const str &lhs, const str &rhs) {
+        return lhs.compare(rhs) > 0;
+}
+
+bool operator<(const str &lhs, const str &rhs) {
+        return lhs.compare(rhs) < 0;
+}
+
+bool operator>=(const str &lhs, const str &rhs) {
+        return lhs.compare(rhs) >= 0;
+}
+
+bool operator<=(const str &lhs, const str &rhs) {
+        return lhs.compare(rhs) <= 0;
 }
 
 // Lets us use `std::cout` for output.
@@ -356,7 +412,7 @@ istream &operator>>(istream &is, str &s) {
         return is;
 }
 
-std::istream &getline(std::istream &is, str &s) {
+istream &getline(istream &is, str &s) {
         s.clear();
         char c;
 
